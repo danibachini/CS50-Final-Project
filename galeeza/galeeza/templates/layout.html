@@ -25,45 +25,53 @@
     <body>
         <!-- navbar -->
         <nav class="navbar navbar-expand-md navbar-light">
-            <div class="container-xxl">
-                <a href="/" class="navbar-brand">
-                    <span class="fw-bold text-secondary">
-                        <p>Logo</p>
-                    </span>
-                </a>
-                <!-- toggle button for mobile -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
-                aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <!-- navbar links -->
-                <div class="collapse navbar-collapse justify-content-end align-center"
-                id="main-nav">
+            {% if session["user_id"] %}
+                <div class="container-xxl">
+                    <a href="/" class="navbar-brand">
+                        <span class="fw-bold text-secondary">
+                            <p>Logo</p>
+                        </span>
+                    </a>
+                    <!-- toggle button for mobile -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- navbar links -->
+                    <div class="collapse navbar-collapse justify-content-end align-center"
+                    id="main-nav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">Your Trips</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/plan">Plan a Trip</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profile">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">Log Out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="container-xxl">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Your Trips</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/plan">Plan a Trip</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/profile">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Log Out</a>
+                            <a class="nav-link" href="/login">Log In</a>
                         </li>
                     </ul>
                 </div>
-            </div>
+            {% endif %}
         </nav>
 
         <!-- CHECK THIS GUY'S VIDEOS -->
         <!-- https://www.youtube.com/watch?v=7AT1X9Z41sA -->
 
         <!-- 2. add a main -->
-       
-
         <!-- add the containers inside each page -->
         {% block main %}{% endblock %}
 

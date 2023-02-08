@@ -10,9 +10,10 @@ import mysql.connector
 from bcrypt import hashpw, checkpw, gensalt
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
+import pymysql
 from datetime import datetime
 import re
-from galeeza.helpers import apology
+from galeeza.helpers import apology, login_required
 
 app = Flask(__name__)
 
@@ -21,6 +22,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# app.config['SESSION_TYPE'] = 'sqlalchemy'
+# app.config['SESSION_SQLALCHEMY'] = 'mysql+pymysql://root:Thg489!asf@localhost/galeeza'
+# Session(app)
+
 db = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -28,9 +33,10 @@ db = mysql.connector.connect(
     database="galeeza"
 )
 
+mycursor = db.cursor()
 
 @app.route("/")
-# @login_required
+@login_required
 def index():
     """Your Trips - Display all the planned trips and old trips"""
     return render_template("index.html")
@@ -44,17 +50,41 @@ def login():
     session.clear()
 
     if request.method == "POST":
-        return "TODO"
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        email = request.form.get("email")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
+        
+        email = request.form["email"]
+        password = request.form["password"]
+
+        # check if email or password were blank
+        if email == "" or password == "":
+            return apology("All fields are required")
+
+        # check on the db table the row where email equals the email provided by the user
+        select_query = f"SELECT * FROM users WHERE email='{email}'"
+        mycursor.execute(select_query)
+        result = mycursor.fetchone()
+
+        # if there's no row with the mail provided
+        if not result:
+            return apology("There's no account registered with this email")
+        
+        # check if the password match with the result from the table
+        check_user = f"SELECT hash FROM users WHERE email='{email}'"
+        mycursor.execute(check_user)
+        user = mycursor.fetchone()
+        hash = user[0].encode('utf-8')
+
+        # If password provided by the user doesn't match the hashed password in the table
+        if not checkpw(password.encode('utf-8'), hash):
+            return apology("Password is incorrect")
+        
+        # Remember which user has logged in
+        session["user_id"] = result[0] 
+
+        # Redirect user to home page
+        return redirect("/")
 
     else:
         return render_template("login.html")
-
-
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -69,12 +99,12 @@ def signup():
         password = request.form["password"]
         confirmation = request.form["confirmation"]
 
-        mycursor = db.cursor()
-
+        # check on the db table the row where email equals the email provided by the user
         select_query = f"SELECT * FROM users WHERE email='{email}'"
         mycursor.execute(select_query)
         result = mycursor.fetchone()
 
+        # check some constraints about the input
         if result:
             return apology("There's already an account registered with this email")
         if first_name == "" or last_name == "" or email == "" or password == "" or confirmation == "":
@@ -87,11 +117,25 @@ def signup():
             return apology("Password must contain at least 1 lowercase letter")
         if not re.search("[A-Z]", password):
             return apology("Password must contain at least 1 uppercase letter")
+
+        # if everything about the input is good, insert the user to the table
         else: 
-            hash = password
-            insert_query = f"INSERT INTO users (first_name, last_name, email, hash) VALUES('{first_name}', '{last_name}', '{email}', '{hash}')"
-            mycursor.execute(insert_query)
+            # hash password with salt
+            hash = hashpw(password.encode('utf-8'), gensalt())
+
+            # store the user into the table
+            insert_query = f"INSERT INTO users (first_name, last_name, email, hash) VALUES('{first_name}', '{last_name}', '{email}', %s)"
+            mycursor.execute(insert_query, (hash,))
             db.commit()
+
+            # get the user id in the table users
+            select_query = f"SELECT * FROM users WHERE email='{email}'"
+            mycursor.execute(select_query)
+            result = mycursor.fetchone()
+
+            # Store the user ID in the session
+            session["user_id"] = result[0]
+            # login_required()
             return redirect("/")
 
     else:
