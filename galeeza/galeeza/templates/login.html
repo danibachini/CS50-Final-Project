@@ -4,16 +4,20 @@
     Log In
 {% endblock %}
 
+{% block nav %}
+    <a class="nav-link" href="/signup">Sign Up</a>
+{% endblock %}
+
 {% block main %}
-<form action="/login" method="post">
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-5 text-left text-md-start"> 
-                <input autocomplete="off" class="form-control mx-auto w-auto m-2" id="email" name="email" placeholder="Email" type="text" required>
-                <input autocomplete="off" class="form-control mx-auto w-auto m-2" id="password" name="password" placeholder="Password" type="password" required>
-                <button class="btn btn-primary m-2 mx-auto w-auto" type="submit">Log in</button>
+    <form action="/login" method="post">
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-5 text-left text-md-start"> 
+                    <input autocomplete="off" class="form-control mx-auto w-auto m-2" id="email" name="email" placeholder="Email" type="text" required>
+                    <input autocomplete="off" class="form-control mx-auto w-auto m-2" id="password" name="password" placeholder="Password" type="password" required>
+                    <button class="btn btn-primary m-2 mx-auto w-auto" type="submit">Log in</button>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 {% endblock %}

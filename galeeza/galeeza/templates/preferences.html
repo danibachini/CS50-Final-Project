@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Preferences
+{% endblock %} 
+
+{% block main %}
+    <!-- code adapted from https://designmodo.com/bootstrap-5-form/  -->
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="progress">
+                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" aria-label="Basic example" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+            </div>
+
+            <div id="qbox-container">
+                <form class="needs-validation" id="form-wrapper" method="post" name="form-wrapper" novalidate>
+                    <div id="steps-container w-100">
+
+                        <div class="step">
+                            <h4>What's your favorite type of thing?</h4><p>(multiple choice)</p>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-4">
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input q-checkbox" id="tourism" name="q_1" type="checkbox" value="tourism"> 
+                                            <label class="form-check-label question__label" for="tourism">Tourism / View sights</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="museums" name="q_1" type="checkbox" value="museums"> 
+                                            <label class="form-check-label question__label" for="museums">Museums</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="sports" name="q_1" type="checkbox" value="sports"> 
+                                            <label class="form-check-label question__label" for="sports">Sports / Adventure</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="music" name="q_1" type="checkbox" value="music"> 
+                                            <label class="form-check-label question__label" for="music">Music</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="shopping" name="q_1" type="checkbox" value="shopping"> 
+                                            <label class="form-check-label question__label" for="shopping">Shopping</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="parks" name="q_1" type="checkbox" value="parks"> 
+                                            <label class="form-check-label question__label" for="parks">Parks / Nature</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="group_act" name="q_1" type="checkbox" value="group_act"> 
+                                            <label class="form-check-label question__label" for="group_act">Group activities</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="kids_act" name="q_1" type="checkbox" value="kids_act"> 
+                                            <label class="form-check-label question__label" for="kids_act">Kids activities</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="night" name="q_1" type="checkbox" value="night"> 
+                                            <label class="form-check-label question__label" for="night">Night life</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="religion" name="q_1" type="checkbox" value="religion"> 
+                                            <label class="form-check-label question__label" for="religion">Religion</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <h4>What's the limit for spending per day?</h4>
+                            <div class="range-wrap justify-content-center">
+                                <div class="col-lg-6">
+                                    <input type="range" class="range" id=cash_day name="q_2">
+                                    <output class="bubble"></output>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <h4>What's your favorite type of food?</h4><p>(multiple choice)</p>
+                            <div class="row justify-content-center">
+                                <div class="col-lg-4">
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input q-checkbox" id="steakhouse" name="q_3" type="checkbox" value="steakhouse"> 
+                                            <label class="form-check-label question__label" for="steakhouse">Steakhouse</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="sea_food" name="q_3" type="checkbox" value="sea_food"> 
+                                            <label class="form-check-label question__label" for="sea_food">Sea food</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="dietary" name="q_3" type="checkbox" value="dietary"> 
+                                            <label class="form-check-label question__label" for="dietary">Dietary / Clean Eating</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="veg" name="q_3" type="checkbox" value="veg"> 
+                                            <label class="form-check-label question__label" for="veg">Vegetarian / Vegan</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="pizza_pasta" name="q_3" type="checkbox" value="pizza_pasta"> 
+                                            <label class="form-check-label question__label" for="pizza_pasta">Pizza / Pasta</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="fast_food" name="q_3" type="checkbox" value="fast_food"> 
+                                            <label class="form-check-label question__label" for="fast_food">Fast food</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="regional" name="q_3" type="checkbox" value="regional"> 
+                                            <label class="form-check-label question__label" for="regional">Regional food</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check ps-0 q-box">
+                                        <div class="q-box__question">
+                                            <input class="form-check-input question__input" id="cafe" name="q_3" type="checkbox" value="cafe"> 
+                                            <label class="form-check-label question__label" for="cafe">Cafe</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="mt-1">
+                                <div class="closing-text">
+                                    <h4>Now you're ready to go!</h4>
+                                    <p>Your profile is ready to start planning your trip!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="q-box__buttons">
+                        <button id="prev-btn" type="button">Previous</button> 
+                        <button id="next-btn" type="button" onclick="store_checkbox_value()">Next</button> 
+                        <button id="submit-btn" type="submit" onclick="replace_function()">Plan Your Trip</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+     </div>
+
+     <div id="preloader-wrapper">
+        <div id="preloader"></div>
+        <div class="preloader-section section-left"></div>
+        <div class="preloader-section section-right"></div>
+     </div>
+    
+     <script src="../static/js/script.js"></script>
+
+{% endblock %}
