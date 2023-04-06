@@ -84,10 +84,16 @@ prevBtn.addEventListener('click', () => {
 
 // function getting the values selected in the checkboxes
 function store_checkbox_value() {
-    let selected_options = [];
     let checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
-    for (let i = 0; i < checkboxes.length; i += 1) {
-        selected_options.push(checkboxes[i].value)}
+    let selected_options = [];
+    // let selected_options = checkboxes.map(checkbox => checkbox.value);
+
+    checkboxes.forEach(checkbox => {
+        selected_options.push(checkbox.value)
+    })
+    // BOTH ARE THE SAME THING
+    // for (let i = 0; i < checkboxes.length; i += 1) {
+    //     selected_options.push(checkboxes[i].value)}
     
     let amount_cash = document.getElementById('cash_day')   // get the value in the range
     selected_options.push(amount_cash.value) 
@@ -106,7 +112,7 @@ function store_checkbox_value() {
     })
 };
 
-// function replacing the URL and the user can't go back the previous page (leaving the preferences form)
+// function replacing the URL and the user can't go back the previous page (once left the preferences form)
 function replace_function(){
     window.location.replace("plan");
 }

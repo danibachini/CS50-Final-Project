@@ -54,9 +54,7 @@ def signup():
         confirmation = request.form["confirmation"]
 
         # check on the table if there's a row where email equals the email provided by the user
-        select_query = ("SELECT * FROM users WHERE email=%s")
-        user_email = (email,)
-        mycursor.execute(select_query, user_email)
+        mycursor.execute("SELECT * FROM users WHERE email=%s", (email,))
         result = mycursor.fetchone()
 
         if result:
@@ -80,15 +78,11 @@ def signup():
             hash = hashpw(password.encode('utf-8'), gensalt())
 
             # store the user into the table
-            insert_query = ("INSERT INTO users (first_name, last_name, email, hash) VALUES(%s, %s, %s, %s)")
-            data_user = (first_name, last_name, email, hash)
-            mycursor.execute(insert_query, data_user)
+            mycursor.execute("INSERT INTO users (first_name, last_name, email, hash) VALUES(%s, %s, %s, %s)", (first_name, last_name, email, hash))
             datab.commit()
 
             # get the user id from the table users
-            select_query = ("SELECT * FROM users WHERE email=%s")
-            user_email = (email,)
-            mycursor.execute(select_query, user_email)
+            mycursor.execute("SELECT * FROM users WHERE email=%s", (email,))
             result = mycursor.fetchone()
 
             # store the user id in the session
@@ -116,9 +110,7 @@ def login():
             return apology("All fields are required")
 
         # check on the datab table the row where email equals the email provided by the user
-        select_query = ("SELECT * FROM users WHERE email=%s")
-        user_email = (email,)
-        mycursor.execute(select_query, user_email)
+        mycursor.execute("SELECT * FROM users WHERE email=%s", (email,))
         result = mycursor.fetchone()
 
         # if there's no row with the mail provided
@@ -126,10 +118,9 @@ def login():
             return apology("There's no account registered with this email")
         
         # check if the password match with the result from the table
-        check_user = ("SELECT hash FROM users WHERE email=%s")
-        user_email = (email,)
-        mycursor.execute(check_user, user_email)
+        mycursor.execute("SELECT hash FROM users WHERE email=%s", (email,))
         user = mycursor.fetchone()
+
         hash = user[0].encode('utf-8')
 
         # If password provided by the user doesn't match the hashed password in the table
@@ -167,67 +158,39 @@ def preferences():
         selected_options = request.get_json()
         print(selected_options)
 
-        # check the id of the user preferences in the user_preferences table
-        id_query = ("SELECT id FROM user_preferences WHERE id_user=%s")
-        session_user = (session["user_id"],)
-        mycursor.execute(id_query, session_user)
-        id_pref, = mycursor.fetchone()  # the comma is to use tuple unpacking to extract the value 
-
         for i in selected_options: 
-            # check on the datab table the row where category equals the category selected by the user
-            select_query = ("SELECT category FROM types WHERE category=%s")
-            category = (i,)
-            mycursor.execute(select_query, category)
-            result = mycursor.fetchone()
+            
+            if i.isnumeric(): # if it's numeric, then it's the user's cost
+                # check on the user_preferences table if there's an id_user compatible with the id of the user
+                mycursor.execute("SELECT id FROM user_preferences WHERE id_user=%s", (session["user_id"],))
+                existing_id_user = mycursor.fetchone()
+                
+                if not(existing_id_user): # if it doesn't exist a record of the user in this table, add it into it
+                    mycursor.execute("INSERT INTO user_preferences (id_user, cost_day) VALUES (%s, %s)", (session["user_id"], i))
+                    datab.commit()
+                
+                else: # if there is a record of the user in this table, update it 
+                    mycursor.execute("UPDATE user_preferences SET cost_day=%s WHERE id_user=%s", (i, session["user_id"]))
+                    datab.commit()
+                
+            else: # if it comes to else, it's a category
+                # get the id of the category in the types table
+                mycursor.execute("SELECT id FROM types WHERE category=%s", (i,))
+                find_result = mycursor.fetchone()[0]
 
-            # add all the preferences the user selected to the table chosen_preferences
-            if result:
-                # get the id of the selected category in the types table
-                types_query = ("SELECT id FROM types WHERE category=%s")
-                category_type = (i,)
-                mycursor.execute(types_query, category_type)
-                category_id, = mycursor.fetchone()  # the comma is to use tuple unpacking to extract the value 
+                # check on the chosen_preferences table if there's an id_type compatible with the id of the category selected by the user
+                mycursor.execute("SELECT id_type FROM chosen_preferences WHERE id_type=%s", (find_result,))
+                category_id = mycursor.fetchone()
 
-                # get the id of the category 
-                find_query = ("SELECT id_user_pref FROM chosen_preferences WHERE id_type=%s")
-                find_type = (category_id,)
-                mycursor.execute(find_query, find_type)
-                find_result = mycursor.fetchone()
-
-                # if the category does not exist in the user's chosen_preferences table, add it
-                if not(find_result): 
+                if not(category_id): 
                     # add the user selected preference to the chosen_preferences table
-                    insert_pref = ("INSERT INTO chosen_preferences (id_type, id_user_pref, bool_value) VALUES (%s, %s, %s)")
-                    values_pref = (category_id, id_pref, 1)
-                    mycursor.execute(insert_pref, values_pref)
-                    datab.commit()
-
-            # add daily cost in the table user_preferences
-            else:
-                check_query = ("SELECT id_user FROM user_preferences WHERE id_user=%s")
-                id_user = (session["user_id"],)
-                mycursor.execute(check_query, id_user)
-                result_id = mycursor.fetchone()
-
-                # if user had previously selected a value, update it for the new value
-                if result_id:
-                    update_query = ("UPDATE user_preferences SET cost_day=%s WHERE id_user=%s")
-                    new_cost = (i,session["user_id"])
-                    mycursor.execute(update_query, new_cost)
-                    datab.commit()
-
-                # if first time user is selecting a value, add it to the table
-                else:
-                    insert_query = ("INSERT INTO user_preferences (cost_day, id_user) VALUES (%s, %s)")
-                    values_user = (i, session["user_id"])
-                    mycursor.execute(insert_query, values_user)
+                    mycursor.execute("INSERT INTO chosen_preferences (id_type, id_user, bool_value) VALUES (%s, %s, %s)", (find_result, session["user_id"], 1))
                     datab.commit()
 
         return redirect("plan.html")
 
     else:
         return render_template("preferences.html")
-
 
 
 @app.route("/plan", methods=["GET", "POST"])
@@ -237,21 +200,26 @@ def plan():
 
     if request.method == "POST":
         return "TODO"
+    
+    # PSEUDOCODE
+    
+
+
+    # PAGES TO DO
+    # one page to fill info to create the plan (city, dates)
+    # one page for each plan
+    # one page for all plans
+   
+    
+
+
+
+
+
 
     else:
-        # PSEUDOCODE
-        # user clicks on plan
-        # check on the datab if the preferences with that id exist (aka row = 1)
-        # if it doesn't exist - redirect user to form
-        # if it does exist - redirect user to plan
-
-
-
-
         # check on the datab table if there is at least one row with the session user_id of the user logged in
-        select_query = ("SELECT * FROM user_preferences WHERE id_user=%s") # <<<<---!!!!! CHANGE THIS it doesn't guarantee the user answered all the questions !!!!
-        id_user = (session["user_id"],)
-        mycursor.execute(select_query, id_user)
+        mycursor.execute("SELECT * FROM user_preferences WHERE id_user=%s", (session["user_id"],))
         result = mycursor.fetchone()
 
         # if there's no row with the session user_id logged in
