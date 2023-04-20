@@ -12,7 +12,7 @@ from bcrypt import hashpw, checkpw, gensalt
 from flask import Flask, redirect, render_template, request, session, flash, jsonify
 from flask_session import Session
 # import pymysql
-# from datetime import datetime
+import datetime
 import re
 from galeeza.helpers import apology, login_required
 
@@ -30,15 +30,14 @@ datab = mysql.connector.connect(
     database="galeeza"
 )
 
-mycursor = datab.cursor()
+mycursor = datab.cursor(buffered=True)
+
+
+
 
 # CHECK DB DESIGN AT https://app.sqldbm.com/MySQL/Edit/p249319/ 
 
-@app.route("/")
-@login_required
-def index():
-    """Your Trips - Display all the planned trips and old trips"""
-    return render_template("index.html")
+
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -165,7 +164,7 @@ def preferences():
                 mycursor.execute("SELECT id FROM user_preferences WHERE id_user=%s", (session["user_id"],))
                 existing_id_user = mycursor.fetchone()
                 
-                if not(existing_id_user): # if it doesn't exist a record of the user in this table, add it into it
+                if not existing_id_user: # if it doesn't exist a record of the user in this table, add it into it
                     mycursor.execute("INSERT INTO user_preferences (id_user, cost_day) VALUES (%s, %s)", (session["user_id"], i))
                     datab.commit()
                 
@@ -174,17 +173,17 @@ def preferences():
                     datab.commit()
                 
             else: # if it comes to else, it's a category
-                # get the id of the category in the types table
-                mycursor.execute("SELECT id FROM types WHERE category=%s", (i,))
+                # get the id of the category in the categories table
+                mycursor.execute("SELECT id FROM categories WHERE category=%s", (i,))
                 find_result = mycursor.fetchone()[0]
 
-                # check on the chosen_preferences table if there's an id_type compatible with the id of the category selected by the user
-                mycursor.execute("SELECT id_type FROM chosen_preferences WHERE id_type=%s", (find_result,))
+                # check on the chosen_categories table if there's an id_category compatible with the id of the category selected by the user
+                mycursor.execute("SELECT id_category FROM chosen_categories WHERE id_category=%s AND id_user=%s", (find_result, session["user_id"]))
                 category_id = mycursor.fetchone()
 
-                if not(category_id): 
-                    # add the user selected preference to the chosen_preferences table
-                    mycursor.execute("INSERT INTO chosen_preferences (id_type, id_user, bool_value) VALUES (%s, %s, %s)", (find_result, session["user_id"], 1))
+                if not category_id: 
+                    # add the user selected preference to the chosen_categories table
+                    mycursor.execute("INSERT INTO chosen_categories (id_category, id_user) VALUES (%s, %s)", (find_result, session["user_id"]))
                     datab.commit()
 
         return redirect("plan.html")
@@ -199,23 +198,53 @@ def plan():
     """Take the user to plan the trip"""
 
     if request.method == "POST":
-        return "TODO"
-    
-    # PSEUDOCODE
-    
+        arrival = request.form["arrival"]
+        departure = request.form["departure"]
+        city = request.form["select_city"]
 
+        # if both arrival, departure, and city were filled, then add them to the datab
+        if city and arrival and departure:
 
-    # PAGES TO DO
-    # one page to fill info to create the plan (city, dates)
-    # one page for each plan
-    # one page for all plans
-   
-    
+            # count the amount of days
+            first_day = datetime.datetime.strptime(arrival, "%Y-%m-%d")
+            last_day = datetime.datetime.strptime(departure, "%Y-%m-%d")
+            days = (last_day - first_day).days
 
+            # add trip info into the table plans
+            mycursor.execute("INSERT INTO plans (city, arrival, departure, days, id_user) VALUES (%s, %s, %s, %s, %s)", (city, arrival, departure, days, session["user_id"]))
+            datab.commit()
 
+            # get the id of the row just added to the table
+            mycursor.execute("SELECT id FROM plans WHERE city=%s AND arrival=%s AND departure=%s AND id_user=%s", (city, arrival, departure, session["user_id"]))
+            id_plan = mycursor.fetchone()[0]
+            # print(id_plan)
 
+            # get the cost_day from user_preferences table of the user
+            mycursor.execute("SELECT cost_day FROM user_preferences WHERE id_user=%s", (session["user_id"],))
+            convert_cost = mycursor.fetchone()[0]
 
+            # convert the cost_day from integer to low, medium, or high so it's compatible with the places table price_level column
+            if convert_cost <= 20:
+                price_level = ("low")
+            elif convert_cost >= 21 and convert_cost <= 70:
+                price_level = ("medium")
+            else:
+                price_level = ("high")
 
+            # for each day of the plan, select 4 places from the places table according to the chosen_categories table
+            for day in range(days):
+                mycursor.execute ("SELECT id FROM places WHERE city=%s AND price_level=%s AND id_cat IN (SELECT id_category FROM chosen_categories WHERE id_user=%s) ORDER BY RAND() LIMIT 4", (city, price_level, session["user_id"]))
+                day = mycursor.fetchall()
+
+                # insert the places of each day into the days table
+                mycursor.execute("INSERT INTO days (id_plan, place_1, place_2, place_3, place_4) VALUES (%s, %s, %s, %s, %s)", (id_plan, day[0][0], day[1][0], day[2][0], day[3][0]))
+                datab.commit()
+
+            # return redirect("/trip_planning")
+            return ("it is working")
+        
+        else: # if any info is missing
+            return apology("All fields are required")
 
     else:
         # check on the datab table if there is at least one row with the session user_id of the user logged in
@@ -230,12 +259,110 @@ def plan():
         return render_template("plan.html")
 
 
+# @app.route("/trip_planning", methods=["GET"])
+# @login_required
+# def trip_planning():
+#     """Display the user's trip planning"""
+
+#     # SELECT days FROM plans WHERE 
+
+#     # heading = ("Day xyz")
+#     # data = (data_from_datab)
+
+#     return render_template("eachPlan.html")
 
 
-
-
-@app.route("/profile", methods=["GET", "POST"])
+@app.route("/")
 @login_required
-def profile():
-    """Display the user's profile"""
-    return render_template("profile.html")
+def index():
+    """Your Trips - Display all the planned trips and old trips"""
+
+    mycursor.execute("SELECT id, city, arrival, departure FROM plans WHERE id_user=%s",(session["user_id"],))
+    trips_list = mycursor.fetchall()
+ 
+    return render_template("index.html", trips_list=trips_list)
+
+
+
+@app.route("/<trip_id>")
+@login_required
+def eachPlan(trip_id):
+    """Display the plan of each trip"""
+    # print("Working here")
+    
+
+    return("It works")
+
+
+
+
+
+
+
+
+# @app.route("/<id>")
+# @login_required
+# def particularplan(id):
+#     print("im here"+id)
+#     return("ici")
+
+
+# @app.route("/profile", methods=["GET", "POST"])
+# @login_required
+# def profile():
+#     """Display the user's profile"""
+#     return render_template("profile.html")
+
+
+
+
+
+# INSERT INTO table_name(column_1,column_2,column_3) VALUES (value_1,value_2,value_3); 
+
+# INSERT INTO categories(id_type, category) 
+# VALUES (1, 'steakhouse'), (1, 'sea_food'), (1, 'dietary'), (1, 'veg'), (1, 'pizza_pasta'), (1, 'fast_food'), (1, 'regional'), (1, 'cafe');
+
+
+# INSERT INTO categories(id_type, category) VALUES (2, 'tourism'); 
+
+# cat_1, cat_2, name, address, city, price_level
+
+
+# CREATE TABLE day_has_places;
+
+# Id
+# FK (id of the plan)
+# Column for each place (if there are gonna be 6 places per day, then 6 columns) - FK from places
+
+# 4 places for attractions
+# 2 places for eating
+
+
+
+
+# CREATE TABLE days
+# (
+#   id INT NOT NULL AUTO_INCREMENT,
+#   id_plan INT NOT NULL,
+#   PRIMARY KEY (id),
+#   FOREIGN KEY (id_plan) REFERENCES plans(id)
+# );
+
+    
+    # PSEUDOCODE
+    # if any field is empty (city, arrival, and departure), then:
+        # error page - all fields are required
+    # else:
+        # add info into the table plans
+        # count amount of days and
+            # for each day, create a row with places in the table days
+            # Cannot repeat attraction or restaurant
+        # display list with the activities for the amount of days selected (page of a single plan) 
+        
+
+
+    # PAGES TO CREATE -------------------------------------
+    # one page to fill info to create the plan (city, dates)
+    # one page for each plan
+    # one page for all plans
+   

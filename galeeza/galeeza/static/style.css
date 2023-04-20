@@ -17,6 +17,7 @@ h4,
 h5,
 h6 {
     color: #767676;
+    padding: 10px;
 }
  
 p {
@@ -74,7 +75,8 @@ label {
  
 button#prev-btn,
 button#next-btn,
-button#submit-btn {
+button#submit-btn,
+button#submitButton {
     font-size: 17px;
     font-weight: bold;
     position: relative;
@@ -100,6 +102,7 @@ button#submit-btn {
  
 button#prev-btn:after,
 button#next-btn:after,
+button#submitButton:after,
 button#submit-btn:after {
     position: absolute;
     top: 90%;
@@ -114,6 +117,7 @@ button#submit-btn:after {
  
 button#prev-btn:hover::after,
 button#next-btn:hover::after,
+button#submitButton:hover::after,
 button#submit-btn:hover::after {
     transform: translateY(-80%);
     transition: transform .3s;
@@ -418,11 +422,13 @@ input[type="radio"]:hover {
 .range-wrap {
     position: relative;
     margin: 0 auto 3rem;
-  }
-  .range {
+}
+
+.range {
     width: 100%;
-  }
-  .bubble {
+}
+
+.bubble {
     background: #DC3545;
     color: white;
     padding: 4px 12px;
@@ -430,8 +436,9 @@ input[type="radio"]:hover {
     border-radius: 4px;
     left: 50%;
     transform: translateX(-50%);
-  }
-  .bubble::after {
+}
+
+.bubble::after {
     content: "";
     position: absolute;
     width: 2px;
@@ -439,4 +446,22 @@ input[type="radio"]:hover {
     background: #DC3545;
     top: -1px;
     left: 50%;
-  }
+}
+
+.dropdown {
+    margin: 2rem;
+}
+
+.dropdownDate, .dropdownCity {
+    margin: 2rem;
+}
+
+#trip-info {
+    margin: 0rem;
+}
+
+#trip-city {
+    margin-bottom: 0.5rem;
+    margin-top: 2rem;
+    padding: 0rem;
+}

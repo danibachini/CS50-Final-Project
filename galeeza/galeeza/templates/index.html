@@ -1,11 +1,32 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Sign in
+    Trips
 {% endblock %}
 
 {% block main %}
-    <form action="/" method="post">
-        <p>INDEX/YOUR TRIPS</p>
-    </form>
+
+    <div class="container">
+        <div class="row justify-content-center">
+
+        <div class="col-md-10">
+            <h1>Here are all your trips</h1>
+        </div>
+
+        {% for trip in trips_list %}
+            
+            <div class="col-lg-5 p-3">
+                <h3 id = "trip-city">{{ trip[1] }}</h3>
+                <p id = "trip-info">Starts on {{ trip[2] }}</p>
+                <p id = "trip-info">Ends on {{ trip[3] }}</p>
+            </div>
+
+            <div class="col-lg-5 p-3">
+                <a href="{{ url_for('eachPlan', trip_id=trip[0]) }}"> 
+                    <button id="submitButton">See Plan</button>
+                </a>
+            </div>
+            
+        {% endfor %}
+
 {% endblock %}

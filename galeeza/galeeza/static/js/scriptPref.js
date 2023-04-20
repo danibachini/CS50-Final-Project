@@ -11,6 +11,7 @@ let bodyElement = document.querySelector('body');
 let succcessDiv = document.getElementById('success');
 
 form.onsubmit = () => {
+    replace_function()
     return false
 }
 
@@ -52,6 +53,7 @@ nextBtn.addEventListener('click', () => {
             }
         }
     }
+    store_checkbox_value()
     progress((100 / stepCount) * current_step);
 });
  
@@ -86,14 +88,10 @@ prevBtn.addEventListener('click', () => {
 function store_checkbox_value() {
     let checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
     let selected_options = [];
-    // let selected_options = checkboxes.map(checkbox => checkbox.value);
 
     checkboxes.forEach(checkbox => {
         selected_options.push(checkbox.value)
     })
-    // BOTH ARE THE SAME THING
-    // for (let i = 0; i < checkboxes.length; i += 1) {
-    //     selected_options.push(checkboxes[i].value)}
     
     let amount_cash = document.getElementById('cash_day')   // get the value in the range
     selected_options.push(amount_cash.value) 
@@ -111,6 +109,7 @@ function store_checkbox_value() {
         dataType: "json"
     })
 };
+
 
 // function replacing the URL and the user can't go back the previous page (once left the preferences form)
 function replace_function(){
@@ -166,4 +165,27 @@ function setBubble(range, bubble) {
 
   bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
 }
+
+
+// const formulaire = document.querySelector('#formPlan');
+// const dropDownButton = document.querySelector('#dropdown-title');
+// const buttonsOptions = document.querySelectorAll('.dropdown-item');
+// const buttonsOption = document.querySelectorAll('.dropdown-props');
+
+// buttonsOption.addEventListener('click', event => {
+//   event.preventDefault()
+//   console.log(buttonsOptions);
+// });
+
+// for (const button of buttonsOptions) {
+//   button.addEventListener('click', event => {
+//     event.preventDefault()
+//     dropDownButton.textContent = event.target.value;
+//   });
+// }
+
+// formulaire.addEventListener("submit", e => e.preventDefault())
+
+
+
 

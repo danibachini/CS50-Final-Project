@@ -4,17 +4,56 @@
     Sign Up
 {% endblock %}
 
-{% block main %}
-    <form action="/plan" method="post">
-        <p>PLAN YOUR TRIP</p>
-    </form>
-{% endblock %}
-
 <!-- CONSOLE: https://console.apify.com/actors/dbEyMBriog95Fv8CW/runs/dKXtW37GPEla1mVz7#output -->
 <!-- IMPORT CSV FILE INTO MYSQL - https://learnsql.com/blog/import-csv-mysql-database/#:~:text=In%20the%20MySQL%20database%2C%20there,a%20look%20at%20each%20one. -->
 
-
 <!-- add the containers inside each page -->
+
+
+{% block main %}
+    
+    <div class="container my-5 text-center">
+        <div class="row">
+            <div class="col">
+                <form id="formPlan" action="/plan" method="post">
+                    
+                    <h3>Select the destination and dates of your trip</h3>
+
+                    <div class="dropdownCity">
+                        <select class="dropdown btn btn-secondary dropdown-toggle" id="select_city" name="select_city" required>
+                            <option value="">Select City</option>
+                            <option value="Paris">Paris</option>
+                            <option value="New York City">New York City</option>
+                            <option value="Barcelona">Barcelona</option>
+                            <option value="Rome">Rome</option>
+                            <option value="Berlin">Berlin</option>
+                            <option value="Tokyo">Tokyo</option>
+                        </select>
+                    </div>
+
+                    <div class="dropdownDate">
+                        <label for="arrival">Arrival: </label>
+                        <input type="date" id="arrival" name="arrival" required>
+                    </div>
+                    
+                    <div class="dropdownDate">
+                        <label for="departure">Departure: </label>
+                        <input type="date" id="departure" name="departure" required>
+                    </div>
+
+                    <button id="submitButton" type="submit">Submit</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load JS file -->
+    <script src="../static/js/scriptPlan.js"></script>
+
+
+{% endblock %}
+
 
 
 
