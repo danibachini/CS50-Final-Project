@@ -21,21 +21,3 @@ buttonsOptions.forEach(button => {
     dropDownButton.textContent = event.target.value;
   });
 })
-
-
-
-// formulaire.onsubmit = () => {
-//     replace_function()
-//     return false
-// }
-
-// formulaire.addEventListener("submit", e => {
-//     e.preventDefault()
-//     // replace_function()
-// })
-
-// function replacing the URL and the user can't go back the previous page (once left the preferences form)
-// function replace_function(){
-//     window.location.replace("profile");
-// }
-

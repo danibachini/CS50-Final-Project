@@ -1,13 +1,31 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Plan
+    {{ city }} Plan
 {% endblock %} 
 
 {% block main %}
 
-<h1>this is your trip planning</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10"> 
+                <h1 id="title_plan">This is your planning to {{ city }}</h1>
+            </div>
 
+            
+            {% for eachplace in plan %}
 
+                    <div class="col-md-5 p-3 dayContainer">    
+                    {% if (3+loop.index) % 4 == 0 %}
+                        <p>Day {{ ((3+loop.index)/4) | int }}</p>
+                    {% endif %}
+                    <h4 id="place_name">{{ eachplace[0] }}</h4>
+                    <p>{{ eachplace[1] }}</p>
+                </div>
 
+        {% endfor %}
+           
+        </div>
+    </div>
+    
 {% endblock %}

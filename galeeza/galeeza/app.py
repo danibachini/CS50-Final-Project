@@ -1,17 +1,8 @@
-# read https://www.loekvandenouweland.com/content/full-path-in-zsh-shell.html
 
-# How to use bcrypt: 
-# https://blog.carsonevans.ca/2020/08/02/storing-passwords-in-flask/ 
-# https://www.npmjs.com/package/bcrypt?activeTab=readme
-
-# import sys
-# import os
-# import json
-import mysql.connector  # documentation: https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html 
+import mysql.connector  
 from bcrypt import hashpw, checkpw, gensalt
-from flask import Flask, redirect, render_template, request, session, flash, jsonify
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
-# import pymysql
 import datetime
 import re
 from galeeza.helpers import apology, login_required
@@ -31,13 +22,6 @@ datab = mysql.connector.connect(
 )
 
 mycursor = datab.cursor(buffered=True)
-
-
-
-
-# CHECK DB DESIGN AT https://app.sqldbm.com/MySQL/Edit/p249319/ 
-
-
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -134,7 +118,6 @@ def login():
 
     else:
         return render_template("login.html")
-
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -235,13 +218,31 @@ def plan():
             for day in range(days):
                 mycursor.execute ("SELECT id FROM places WHERE city=%s AND price_level=%s AND id_cat IN (SELECT id_category FROM chosen_categories WHERE id_user=%s) ORDER BY RAND() LIMIT 4", (city, price_level, session["user_id"]))
                 day = mycursor.fetchall()
+                print(day)
 
-                # insert the places of each day into the days table
-                mycursor.execute("INSERT INTO days (id_plan, place_1, place_2, place_3, place_4) VALUES (%s, %s, %s, %s, %s)", (id_plan, day[0][0], day[1][0], day[2][0], day[3][0]))
-                datab.commit()
+                if len(day) == 4: 
+                    # insert the places of each day into the days table
+                    mycursor.execute("INSERT INTO days (id_plan, place_1, place_2, place_3, place_4) VALUES (%s, %s, %s, %s, %s)", (id_plan, day[0][0], day[1][0], day[2][0], day[3][0]))
+                    datab.commit()
 
-            # return redirect("/trip_planning")
-            return ("it is working")
+                elif len(day) == 3: 
+                    # insert the places of each day into the days table
+                    mycursor.execute("INSERT INTO days (id_plan, place_1, place_2, place_3) VALUES (%s, %s, %s, %s)", (id_plan, day[0][0], day[1][0], day[2][0]))
+                    datab.commit()
+
+                elif len(day) == 2:
+                    # insert the places of each day into the days table
+                    mycursor.execute("INSERT INTO days (id_plan, place_1, place_2) VALUES (%s, %s, %s)", (id_plan, day[0][0], day[1][0]))
+                    datab.commit()
+
+                else: 
+                    # insert the places of each day into the days table
+                    mycursor.execute("INSERT INTO days (id_plan, place_1) VALUES (%s, %s)", (id_plan, day[0][0]))
+                    datab.commit()
+
+
+            return redirect("/")
+            # return ("it is working")
         
         else: # if any info is missing
             return apology("All fields are required")
@@ -257,20 +258,6 @@ def plan():
 
         # if the user already filled in their preferences
         return render_template("plan.html")
-
-
-# @app.route("/trip_planning", methods=["GET"])
-# @login_required
-# def trip_planning():
-#     """Display the user's trip planning"""
-
-#     # SELECT days FROM plans WHERE 
-
-#     # heading = ("Day xyz")
-#     # data = (data_from_datab)
-
-#     return render_template("eachPlan.html")
-
 
 @app.route("/")
 @login_required
@@ -288,81 +275,55 @@ def index():
 @login_required
 def eachPlan(trip_id):
     """Display the plan of each trip"""
-    # print("Working here")
-    
 
-    return("It works")
+    mycursor.execute("""SELECT places.name, places.address
+                    FROM (	
+                    SELECT days.place_1
+                    FROM days
+                    WHERE id_plan 
+                    IN (
+                        SELECT id 
+                        FROM plans 
+                        WHERE id=%s
+                        )
+                    UNION ALL
+                    SELECT days.place_2
+                    FROM days
+                    WHERE id_plan 
+                    IN (
+                        SELECT id 
+                        FROM plans 
+                        WHERE id=%s
+                        )
+                    UNION ALL
+                    SELECT days.place_3
+                    FROM days
+                    WHERE id_plan 
+                    IN (
+                        SELECT id 
+                        FROM plans 
+                        WHERE id=%s
+                        )
+                    UNION ALL
+                    SELECT days.place_4
+                    FROM days
+                    WHERE id_plan 
+                    IN (
+                        SELECT id 
+                        FROM plans 
+                        WHERE id=%s
+                        ) 
+                    ) AS temp 
+                    INNER JOIN places ON places.id = temp.place_1""", (trip_id, trip_id, trip_id, trip_id))
+    plan = mycursor.fetchall()
+    # return(plan)
 
+    mycursor.execute("SELECT city FROM plans WHERE id=%s", (trip_id,))
+    city = mycursor.fetchone()
+    # print(city[0])
 
-
-
-
-
-
-
-# @app.route("/<id>")
-# @login_required
-# def particularplan(id):
-#     print("im here"+id)
-#     return("ici")
-
-
-# @app.route("/profile", methods=["GET", "POST"])
-# @login_required
-# def profile():
-#     """Display the user's profile"""
-#     return render_template("profile.html")
-
-
-
-
-
-# INSERT INTO table_name(column_1,column_2,column_3) VALUES (value_1,value_2,value_3); 
-
-# INSERT INTO categories(id_type, category) 
-# VALUES (1, 'steakhouse'), (1, 'sea_food'), (1, 'dietary'), (1, 'veg'), (1, 'pizza_pasta'), (1, 'fast_food'), (1, 'regional'), (1, 'cafe');
-
-
-# INSERT INTO categories(id_type, category) VALUES (2, 'tourism'); 
-
-# cat_1, cat_2, name, address, city, price_level
-
-
-# CREATE TABLE day_has_places;
-
-# Id
-# FK (id of the plan)
-# Column for each place (if there are gonna be 6 places per day, then 6 columns) - FK from places
-
-# 4 places for attractions
-# 2 places for eating
-
-
-
-
-# CREATE TABLE days
-# (
-#   id INT NOT NULL AUTO_INCREMENT,
-#   id_plan INT NOT NULL,
-#   PRIMARY KEY (id),
-#   FOREIGN KEY (id_plan) REFERENCES plans(id)
-# );
-
-    
-    # PSEUDOCODE
-    # if any field is empty (city, arrival, and departure), then:
-        # error page - all fields are required
-    # else:
-        # add info into the table plans
-        # count amount of days and
-            # for each day, create a row with places in the table days
-            # Cannot repeat attraction or restaurant
-        # display list with the activities for the amount of days selected (page of a single plan) 
-        
+    return render_template("eachPlan.html", plan=plan, city=city[0])
+    # return("It works")
 
 
-    # PAGES TO CREATE -------------------------------------
-    # one page to fill info to create the plan (city, dates)
-    # one page for each plan
-    # one page for all plans
-   
+
