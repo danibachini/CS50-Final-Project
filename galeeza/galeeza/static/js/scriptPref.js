@@ -96,9 +96,7 @@ function store_checkbox_value() {
     let amount_cash = document.getElementById('cash_day')   // get the value in the range
     selected_options.push(amount_cash.value) 
 
-    // const s = JSON.stringify(selected_options);  // s is a list 
-    console.log(selected_options);  // -----------!!!!!!!!! can be removed later - it prints the values in the console on the browser and terminal  !!!!!!!!!!!-----------------
-    // window.alert(selected_options)  // -----------!!!!!!!!! can be removed later - alert window on the browser !!!!!!!!!!!-----------------------
+    console.log(selected_options);  
 
     // sends an AJAX request to the server with the values selected in the checkboxes
     $.ajax({
@@ -116,31 +114,6 @@ function replace_function(){
     window.location.replace("plan");
 }
  
-
- 
-
-// submitBtn.addEventListener('click', () => {
-//     preloader.classList.add('d-block');
- 
-//     const timer = ms => new Promise(res => setTimeout(res, ms));
- 
-//     timer(3000)
-//         .then(() => {
-//             bodyElement.classList.add('loaded');
-//         }).then(() => {
-//             step[stepCount].classList.remove('d-block');
-//             step[stepCount].classList.add('d-none');
-//             prevBtn.classList.remove('d-inline-block');
-//             prevBtn.classList.add('d-none');
-//             submitBtn.classList.remove('d-inline-block');
-//             submitBtn.classList.add('d-none');
-//             succcessDiv.classList.remove('d-none');
-//             succcessDiv.classList.add('d-block');
-//         })
- 
-// });
-
-
 
 // RANGE
 // code from https://css-tricks.com/value-bubbles-for-range-inputs/
@@ -165,27 +138,4 @@ function setBubble(range, bubble) {
 
   bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
 }
-
-
-// const formulaire = document.querySelector('#formPlan');
-// const dropDownButton = document.querySelector('#dropdown-title');
-// const buttonsOptions = document.querySelectorAll('.dropdown-item');
-// const buttonsOption = document.querySelectorAll('.dropdown-props');
-
-// buttonsOption.addEventListener('click', event => {
-//   event.preventDefault()
-//   console.log(buttonsOptions);
-// });
-
-// for (const button of buttonsOptions) {
-//   button.addEventListener('click', event => {
-//     event.preventDefault()
-//     dropDownButton.textContent = event.target.value;
-//   });
-// }
-
-// formulaire.addEventListener("submit", e => e.preventDefault())
-
-
-
 

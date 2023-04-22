@@ -1,8 +1,4 @@
 
-
-const formulaire = document.querySelector('#formPlan');
-const dropDownButton = document.querySelector('#dropdown-title');
-const buttonsOptions = document.querySelectorAll('.dropdown-item');
 const arrival = document.querySelector('#arrival');
 const departure = document.querySelector('#departure');
 
@@ -21,3 +17,5 @@ buttonsOptions.forEach(button => {
     dropDownButton.textContent = event.target.value;
   });
 })
+
+

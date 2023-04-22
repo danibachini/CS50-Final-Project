@@ -138,7 +138,7 @@ def preferences():
 
     if request.method == "POST":
         selected_options = request.get_json()
-        print(selected_options)
+        # print(selected_options)
 
         for i in selected_options: 
             
@@ -316,14 +316,11 @@ def eachPlan(trip_id):
                     ) AS temp 
                     INNER JOIN places ON places.id = temp.place_1""", (trip_id, trip_id, trip_id, trip_id))
     plan = mycursor.fetchall()
-    # return(plan)
 
     mycursor.execute("SELECT city FROM plans WHERE id=%s", (trip_id,))
     city = mycursor.fetchone()
-    # print(city[0])
 
     return render_template("eachPlan.html", plan=plan, city=city[0])
-    # return("It works")
 
 
 
