@@ -8,51 +8,48 @@
         <!-- make it responsive -->
         <meta name="viewport" content="initial-scale=1, width=device-width">
 
-        
 
-
-
-        <!-- -------------------- !!!!!!!! FIX - NOT WORKING !!!!!!!!!!!! -------------------------- -->
-        <link href="/images/favicon.png" rel="icon">
+        <link href="../static/images/favicon-32x32.png" rel="icon">
 
         <title>Galeeza ⎮ Automated Trip Planner - {% block title %}{% endblock %}</title>
     </head>
     <body>
         <!-- navbar -->
-        <nav class="navbar navbar-expand-md navbar-light">
+        <nav class="navbar navbar-expand-md navbar-light pb-5 pt-3">
             {% if session["user_id"] %}
                 <div class="container-xxl">
-                    <a class="navbar-brand" src="../static/images/logo_blue.png"></a>
-                    <!-- <a href="/" class="navbar-brand">  -->
-                        <!-- <img src="../static/images/logo_blue.png" alt="galeeza logo">  -->
-                        <!-- <span class="fw-bold text-secondary"> -->
-                            <!-- <p>Logo</p> -->
-                            <!-- <img class="navbar-brand" src="../static/images/logo_blue.png" alt="galeeza logo"> 
-                        </span> -->
-                    <!-- </a> -->
+
+                    
+
                     <!-- toggle button for mobile -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false"
                     aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
+
                     <!-- navbar links -->
-                    <div class="collapse navbar-collapse justify-content-end align-center"
-                    id="main-nav">
-                        <ul class="navbar-nav">
+                    <!-- <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav"> -->
+                    <div class="collapse navbar-collapse justify-content-center border-bottom pb-3" id="main-nav">
+
+                        <div class="col-md-8">
+                            <a class="navbar-brand" href="#">
+                                <img src="../static/images/logo-blue.png" alt="Bootstrap" width="w-auto" height="24">
+                            </a>
+                        </div>
+
+                        <ul class="navbar-nav d-flex end-0">
                             <li class="nav-item">
                                 <a class="nav-link" href="/">Your Trips</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/plan">Plan a Trip</a>
                             </li>
-                            <!-- <li class="nav-item">
-                                <a class="nav-link" href="/profile">Profile</a>
-                            </li> -->
                             <li class="nav-item">
                                 <a class="nav-link" href="/logout">Log Out</a>
                             </li>
                         </ul>
+
                     </div>
                 </div>
             {% else %}
@@ -74,23 +71,29 @@
         {% block main %}{% endblock %}
 
         <!-- Footer -->
-        <div class="container">
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-              <div class="col-md-4 d-flex align-items-center">
-                <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
-                  <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
-                </a>
-                <span class="mb-3 mb-md-0 text-muted">&copy; 2023 Galeeza, Inc. All rights reserved.</span>
-              </div>
-          
-              <!-- <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"/></svg></a></li>
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"/></svg></a></li>
-                <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"/></svg></a></li>
-              </ul> -->
-
-            </footer>
-        </div>
+        {% if session["user_id"] %}
+            <div class="container">
+                <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="col-md-4 d-flex align-items-center">
+                    <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
+                    </a>
+                    <span class="mb-3 mb-md-0 text-muted">&copy; 2023 Galeeza, Inc. All rights reserved.</span>
+                </div>
+                </footer>
+            </div>
+        {% else %}
+            <div class="container fixed-bottom">
+                <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="col-md-4 d-flex align-items-center">
+                    <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                    <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
+                    </a>
+                    <span class="mb-3 mb-md-0 text-muted">&copy; 2023 Galeeza, Inc. All rights reserved.</span>
+                </div>
+                </footer>
+            </div>
+        {% endif %}
         
         <!-- Bootstrap JS -->
         <!-- when you use bootstrap.bundle.min.js, you do not need to include the scripts for Popper and jQuery because they're already included in this script -->

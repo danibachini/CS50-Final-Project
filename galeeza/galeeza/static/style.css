@@ -474,3 +474,20 @@ input[type="radio"]:hover {
     align-content: flex-end;
     justify-content: flex-end;
 }
+
+#signup-title {
+    padding: 0rem;
+    color: #011235;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#bg-image {
+    background-image: url("../static/images/photo-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+#link-login-signup {
+    color: #ffffff;
+}

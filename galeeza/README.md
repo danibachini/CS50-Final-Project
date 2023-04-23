@@ -3,7 +3,7 @@
 --------------->>>>>> clone project to codespace to submit it <<<<<<<-------------- 
 
 # Trip Planner
-#### Video Demo:  <URL HERE>
+#### Video Demo:  <https://youtu.be/sAdUqzwtbtY>
 #### Description:
 
 
