@@ -17,7 +17,7 @@ Session(app)
 datab = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="Thg489!asf",
+    passwd="",
     database="galeeza"
 )
 
