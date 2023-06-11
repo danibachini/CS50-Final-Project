@@ -1,7 +1,5 @@
 
 
---------------->>>>>> clone project to codespace to submit it <<<<<<<-------------- 
-
 # Trip Planner
 #### Video Demo:  <https://youtu.be/sAdUqzwtbtY>
 #### Description:
